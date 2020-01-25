@@ -11,10 +11,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: template
-  title: Template
+  id: semamorse
+  title: Semamorse
   author: TasThing
-  description: 
+  description: 'What do you do when you have two things you like? Smash them together,
+    of course.
+
+
+    Module idea and implementation by TasThing.'
   version: 
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 01c5223c0785a504c83e4d97d0faadef, type: 3}
