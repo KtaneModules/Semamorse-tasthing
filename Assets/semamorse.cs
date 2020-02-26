@@ -36,6 +36,7 @@ public class semamorse : MonoBehaviour
 	private Coroutine rotating;
 	private bool[] fading = new bool[8];
 	private bool transitioning;
+	private bool flashing;
 	private bool stage2;
 	private bool isCCW;
 	private static readonly Char[] alphabet = new Char[26] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -133,14 +134,14 @@ public class semamorse : MonoBehaviour
 			button.OnInteract += delegate () { PressArrowButton(button); return false; };
 		foreach (KMSelectable button in dotButtons)
 			button.OnInteract += delegate () { PressDotButton(button); return false; };
-		colorOrderIndex = (bomb.GetBatteryHolderCount() + bomb.GetPortPlates().Count()) % 10;
-		colorOrder = colorTable[colorOrderIndex];
-		Debug.LogFormat("[Semamorse #{0}] Battery holders plus port plates modulo 10 is {1}.", moduleId, colorOrderIndex);
 		isCCW = rnd.Range(0,2) == 0;
     }
 
     void Start()
     {
+		colorOrderIndex = (bomb.GetBatteryHolderCount() + bomb.GetPortPlates().Count()) % 10;
+		colorOrder = colorTable[colorOrderIndex];
+		Debug.LogFormat("[Semamorse #{0}] Battery holders plus port plates modulo 10 is {1}.", moduleId, colorOrderIndex);
 		stage2 = false;
 		displayedColors = Enumerable.Range(0,5).ToList().Shuffle().ToArray();
 		difference = rnd.Range(0,5);
@@ -187,7 +188,7 @@ public class semamorse : MonoBehaviour
 
 	void PressArrowButton(KMSelectable button)
 	{
-		if (transitioning)
+		if (transitioning || fading.Contains(true))
 			return;
 		button.AddInteractionPunch(.5f);
 		audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, button.transform);
@@ -213,9 +214,13 @@ public class semamorse : MonoBehaviour
 				StartCoroutine(Reset());
 			else
 			{
+				var subDirections = new List<string>();
+				for (int i = 0; i < 8; i++)
+					if (selected[i])
+						subDirections.Add(directionNames[i]);
 				if (selected.SequenceEqual(solution))
 				{
-					Debug.LogFormat("[Semamorse #{0}] You submitted {1}. That is correct. Module solved!", moduleId, directionNames[Array.IndexOf(selected, true)]);
+					Debug.LogFormat("[Semamorse #{0}] You submitted {1} {2}. That is correct. Module solved!", moduleId, subDirections[0], subDirections[1]);
 					moduleSolved = true;
 					StartCoroutine(Solve());
 				}
@@ -223,7 +228,7 @@ public class semamorse : MonoBehaviour
 				{
 					module.HandleStrike();
 					if (selected.Count(b => b) == 2)
-						Debug.LogFormat("[Semamorse #{0}] You submitted {1}. That is incorrect. Strike!", moduleId, directionNames[Array.IndexOf(selected, true)]);
+						Debug.LogFormat("[Semamorse #{0}] You submitted {1} {2}. That is incorrect. Strike!", moduleId, subDirections[0], subDirections[1]);
 					else
 						Debug.LogFormat("[Semamorse #{0}] You only submitted 1 direction, but I was expecting 2. Strike!", moduleId);
 				}
@@ -242,6 +247,7 @@ public class semamorse : MonoBehaviour
 			return;
 		if (!stage2)
 		{
+			transitioning = true;
 			foreach (Renderer dot in dots)
 			{
 				dot.material.color = off;
@@ -285,16 +291,19 @@ public class semamorse : MonoBehaviour
 
 	IEnumerator FlashMorse(Renderer dot, bool[] morseLetter)
 	{
-		var length = morseLetter.Length;
-		morseReset:
-		for (int i = 0; i < length; i++)
+		while (flashing)
 		{
-			dot.material.color = morseLetter[i] ? onColors[displayedColors[currentPos]] : off;
-			yield return new WaitForSeconds(.25f);
+			var length = morseLetter.Length;
+			morseReset:
+			for (int i = 0; i < length; i++)
+			{
+				dot.material.color = morseLetter[i] ? onColors[displayedColors[currentPos]] : off;
+				yield return new WaitForSeconds(.25f);
+			}
+			dot.material.color = off;
+			yield return new WaitForSeconds(1.75f);
+			goto morseReset;
 		}
-		dot.material.color = off;
-		yield return new WaitForSeconds(1.75f);
-		goto morseReset;
 	}
 
 	IEnumerator LetterChange()
@@ -323,16 +332,21 @@ public class semamorse : MonoBehaviour
 			elapsed += Time.deltaTime;
 		}
 		fading[Array.IndexOf(dots, dot)] = false;
+		transitioning = false;
 	}
 
 	void StartFlashing()
 	{
+		if (flashing)
+			return;
+		flashing = true;
 		for (int i = 0; i < 2; i++)
 			morseFlashes[i] = StartCoroutine(FlashMorse(dots[semaphore[displayedLetters[0][currentPos]][i]], morse[displayedLetters[1][currentPos]]));
 	}
 
 	void StopFlashing()
 	{
+		flashing = false;
 		for (int i = 0; i < 2; i++)
 			StopCoroutine(morseFlashes[i]);
 	}
