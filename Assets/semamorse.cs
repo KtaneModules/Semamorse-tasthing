@@ -221,7 +221,6 @@ public class semamorse : MonoBehaviour
 				if (selected.SequenceEqual(solution))
 				{
 					Debug.LogFormat("[Semamorse #{0}] You submitted {1} {2}. That is correct. Module solved!", moduleId, subDirections[0], subDirections[1]);
-					moduleSolved = true;
 					StartCoroutine(Solve());
 				}
 				else
@@ -385,6 +384,7 @@ public class semamorse : MonoBehaviour
 		foreach (Renderer dot in dots)
 			StartCoroutine(Fade(dot, rainbow[Array.IndexOf(dots, dot)]));
 		module.HandlePass();
+        moduleSolved = true;
 		audio.PlaySoundAtTransform("solve", pivot);
 	}
 
@@ -433,4 +433,98 @@ public class semamorse : MonoBehaviour
 			elapsed += Time.deltaTime;
 		}
 	}
+
+    // Twitch Plays
+    #pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"!{0} <left/right> [Presses the left or right arrow] | !{0} start [If not in submission mode, enters submission mode] | !{0} <NW SE> [If in submission mode, presses the dots northwest and southeast]";
+    #pragma warning restore 414
+
+    IEnumerator ProcessTwitchCommand(string input)
+    {
+        var cmd = input.ToLowerInvariant().Split(' ').ToArray();
+        if (cmd.Length == 1)
+        {
+            if (cmd[0] == "left")
+            {
+                yield return null;
+                arrowButtons[0].OnInteract();
+            }
+            else if (cmd[0] == "right")
+            {
+                yield return null;
+                arrowButtons[1].OnInteract();
+            }
+            else if (cmd[0] == "start")
+            {
+                if (stage2)
+                {
+                    yield return "sendtochaterror The module is already in submission mode.";
+                    yield break;
+                }
+                else
+                {
+                    yield return null;
+                    dotButtons[0].OnInteract();
+                }
+            }
+            else
+                yield break;
+        }
+        else if (cmd.Length == 2)
+        {
+            var directions = new string[8] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+            for (int i = 0; i < 2; i++)
+                cmd[i] = cmd[i].ToUpperInvariant();
+            if (!directions.Contains(cmd[0]) || !directions.Contains(cmd[1]))
+                yield break;
+            else
+            {
+                yield return null;
+                for (int i = 0; i < 2; i++)
+                {
+                    dotButtons[Array.IndexOf(directions, cmd[i])].OnInteract();
+                    yield return new WaitForSeconds(.1f);
+                }
+            }
+        }
+        else
+            yield break;
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        if (stage2)
+            goto readyToSubmit;
+        dotButtons[0].OnInteract();
+        yield return new WaitForSeconds(1.25f);
+        readyToSubmit:
+        if (selected.Contains(true))
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (selected[i] && !solution[i])
+                {
+                    dotButtons[i].OnInteract();
+                    yield return new WaitForSeconds(.1f);
+                }
+            }
+            yield return new WaitForSeconds(.25f);
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            if (solution[i] && !selected[i])
+            {
+                dotButtons[i].OnInteract();
+                yield return new WaitForSeconds(.1f);
+            }
+        }
+        yield return new WaitForSeconds(1f);
+        arrowButtons[0].OnInteract();
+        while (!moduleSolved)
+        {
+            yield return true;
+            yield return new WaitForSeconds(.1f);
+        }
+        yield return true;
+    }
 }
