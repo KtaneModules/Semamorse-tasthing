@@ -188,7 +188,7 @@ public class semamorse : MonoBehaviour
 
 	void PressArrowButton(KMSelectable button)
 	{
-		if (transitioning || fading.Contains(true))
+		if (transitioning || (fading.Contains(true) && !stage2) || (fading.Contains(true) && !selected.Contains(true)))
 			return;
 		button.AddInteractionPunch(.5f);
 		audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, button.transform);
