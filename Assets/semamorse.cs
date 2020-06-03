@@ -188,12 +188,10 @@ public class semamorse : MonoBehaviour
 
 	void PressArrowButton(KMSelectable button)
 	{
-		if (transitioning || (fading.Contains(true) && !stage2) || (fading.Contains(true) && !selected.Contains(true)))
+		if (moduleSolved || transitioning || (fading.Contains(true) && !stage2) || (fading.Contains(true) && !selected.Contains(true)))
 			return;
 		button.AddInteractionPunch(.5f);
 		audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, button.transform);
-		if (moduleSolved)
-			return;
 		if (!stage2)
 		{
 			var offsets = new int[2] { -1, 1 };
@@ -221,6 +219,7 @@ public class semamorse : MonoBehaviour
 				if (selected.SequenceEqual(solution))
 				{
 					Debug.LogFormat("[Semamorse #{0}] You submitted {1} {2}. That is correct. Module solved!", moduleId, subDirections[0], subDirections[1]);
+                    moduleSolved = true;
 					StartCoroutine(Solve());
 				}
 				else
@@ -367,7 +366,7 @@ public class semamorse : MonoBehaviour
 
 	IEnumerator Solve()
 	{
-		StopCoroutine(rotating);
+        StopCoroutine(rotating);
 		StartCoroutine(StopSpinning());
 		StartCoroutine(FadeLed());
 		for (int i = 0; i < 8; i++)
@@ -384,7 +383,6 @@ public class semamorse : MonoBehaviour
 		foreach (Renderer dot in dots)
 			StartCoroutine(Fade(dot, rainbow[Array.IndexOf(dots, dot)]));
 		module.HandlePass();
-        moduleSolved = true;
 		audio.PlaySoundAtTransform("solve", pivot);
 	}
 
