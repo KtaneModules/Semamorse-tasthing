@@ -292,7 +292,7 @@ public class semamorse : MonoBehaviour
         while (flashing)
         {
             var length = morseLetter.Length;
-        morseReset:
+            morseReset:
             for (int i = 0; i < length; i++)
             {
                 dot.material.color = morseLetter[i] ? onColors[displayedColors[currentPos]] : off;
