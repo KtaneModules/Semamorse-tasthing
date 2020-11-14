@@ -292,7 +292,7 @@ public class semamorse : MonoBehaviour
         while (flashing)
         {
             var length = morseLetter.Length;
-            morseReset:
+        morseReset:
             for (int i = 0; i < length; i++)
             {
                 dot.material.color = morseLetter[i] ? onColors[displayedColors[currentPos]] : off;
@@ -440,6 +440,8 @@ public class semamorse : MonoBehaviour
     IEnumerator ProcessTwitchCommand(string input)
     {
         var cmd = input.ToLowerInvariant().Split(' ').ToArray();
+        yield return "solve";
+        yield return "strike";
         if (cmd.Length == 1)
         {
             if (cmd[0] == "left")
@@ -495,7 +497,7 @@ public class semamorse : MonoBehaviour
             goto readyToSubmit;
         dotButtons[0].OnInteract();
         yield return new WaitForSeconds(1.25f);
-    readyToSubmit:
+        readyToSubmit:
         if (selected.Contains(true))
         {
             for (int i = 0; i < 8; i++)
