@@ -22,6 +22,7 @@ public class semamorse : MonoBehaviour
     public Color lightGray;
     public Color white;
     public Color[] rainbow;
+    public TextMesh colorblindText;
 
     private int[][] displayedLetters = new int[2][] { new int[5], new int[5] };
     private int[] displayedColors = new int[5];
@@ -135,6 +136,7 @@ public class semamorse : MonoBehaviour
         foreach (KMSelectable button in dotButtons)
             button.OnInteract += delegate () { PressDotButton(button); return false; };
         isCCW = rnd.Range(0, 2) == 0;
+        colorblindText.gameObject.SetActive(GetComponent<KMColorblindMode>().ColorblindModeActive);
     }
 
     void Start()
@@ -144,6 +146,7 @@ public class semamorse : MonoBehaviour
         Debug.LogFormat("[Semamorse #{0}] Battery holders plus port plates modulo 10 is {1}.", moduleId, colorOrderIndex);
         stage2 = false;
         displayedColors = Enumerable.Range(0, 5).ToList().Shuffle().ToArray();
+        colorblindText.text = "RGCIP"[displayedColors[0]].ToString();
         difference = rnd.Range(0, 5);
         for (int i = 0; i < 5; i++)
         {
@@ -199,6 +202,7 @@ public class semamorse : MonoBehaviour
             if (!(currentPos == 0 && ix == 0) && !(currentPos == 4 && ix == 1))
             {
                 currentPos += offsets[ix];
+                colorblindText.text = "RGCIP"[displayedColors[currentPos]].ToString();
                 foreach (Renderer dot in dots)
                     dot.material.color = off;
                 StartCoroutine(LetterChange());
@@ -209,7 +213,10 @@ public class semamorse : MonoBehaviour
         else
         {
             if (!selected.Contains(true))
+            {
+                colorblindText.text = "RGCIP"[displayedColors[currentPos]].ToString();
                 StartCoroutine(Reset());
+            }
             else
             {
                 var subDirections = new List<string>();
@@ -251,6 +258,7 @@ public class semamorse : MonoBehaviour
                 dot.material.color = off;
                 StartCoroutine(Fade(dot, lightGray));
                 audio.PlaySoundAtTransform("beginSubmission", pivot);
+                colorblindText.text = "";
                 stage2 = true;
                 StopFlashing();
             }
