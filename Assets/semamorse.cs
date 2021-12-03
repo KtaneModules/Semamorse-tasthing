@@ -40,95 +40,95 @@ public class semamorse : MonoBehaviour
     private bool flashing;
     private bool stage2;
     private bool isCCW;
-    private static readonly Char[] alphabet = new Char[26] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+    private static readonly Char[] alphabet = new[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     private static readonly int[][] colorTable = new int[10][]
     {
-        new int[5] { 4, 2, 0, 3, 1 },
-        new int[5] { 1, 0, 4, 3, 2 },
-        new int[5] { 2, 4, 1, 3, 0 },
-        new int[5] { 4, 2, 0, 1, 3 },
-        new int[5] { 1, 2, 3, 4, 0 },
-        new int[5] { 0, 3, 2, 1, 4 },
-        new int[5] { 1, 0, 2, 3, 4 },
-        new int[5] { 0, 3, 1, 4, 2 },
-        new int[5] { 1, 0, 2, 4, 3 },
-        new int[5] { 0, 2, 3, 1, 4 }
+        new[] { 4, 2, 0, 3, 1 },
+        new[] { 1, 0, 4, 3, 2 },
+        new[] { 2, 4, 1, 3, 0 },
+        new[] { 4, 2, 0, 1, 3 },
+        new[] { 1, 2, 3, 4, 0 },
+        new[] { 0, 3, 2, 1, 4 },
+        new[] { 1, 0, 2, 3, 4 },
+        new[] { 0, 3, 1, 4, 2 },
+        new[] { 1, 0, 2, 4, 3 },
+        new[] { 0, 2, 3, 1, 4 }
     };
     private static readonly Char[][] letterTable = new Char[4][]
     {
-        new Char[5] { 'C', 'Q', 'H', 'M', 'I' },
-        new Char[5] { 'L', 'E', 'K', 'B', 'S' },
-        new Char[5] { 'J', 'N', 'P', 'D', 'F' },
-        new Char[5] { 'R', 'A', 'O', 'T', 'G' },
+        new[] { 'C', 'Q', 'H', 'M', 'I' },
+        new[] { 'L', 'E', 'K', 'B', 'S' },
+        new[] { 'J', 'N', 'P', 'D', 'F' },
+        new[] { 'R', 'A', 'O', 'T', 'G' },
     };
     private static readonly int[][] semaphore = new int[26][]
     {
-        new int[2] { 4, 5 }, // A
-		new int[2] { 4, 6 }, // B
-		new int[2] { 4, 7 }, // C
-		new int[2] { 4, 0 }, // D
-		new int[2] { 4, 1 }, // E
-		new int[2] { 4, 2 }, // F
-		new int[2] { 4, 3 }, // G
-		new int[2] { 5, 6 }, // H
-		new int[2] { 5, 7 }, // I
-		new int[2] { 0, 2 }, // J
-		new int[2] { 5, 0 }, // K
-		new int[2] { 5, 1 }, // L
-		new int[2] { 5, 2 }, // M
-		new int[2] { 5, 3 }, // N
-		new int[2] { 6, 7 }, // O
-		new int[2] { 6, 0 }, // P
-		new int[2] { 6, 1 }, // Q
-		new int[2] { 6, 2 }, // R
-		new int[2] { 6, 3 }, // S
-		new int[2] { 7, 0 }, // T
-		new int[2] { 7, 1 }, // U
-		new int[2] { 0, 3 }, // V
-		new int[2] { 1, 2 }, // W
-		new int[2] { 1, 3 }, // X
-		new int[2] { 7, 2 }, // Y
-		new int[2] { 2, 3 } // Z
+        new[] { 4, 5 }, // A
+		new[] { 4, 6 }, // B
+		new[] { 4, 7 }, // C
+		new[] { 4, 0 }, // D
+		new[] { 4, 1 }, // E
+		new[] { 4, 2 }, // F
+		new[] { 4, 3 }, // G
+		new[] { 5, 6 }, // H
+		new[] { 5, 7 }, // I
+		new[] { 0, 2 }, // J
+		new[] { 5, 0 }, // K
+		new[] { 5, 1 }, // L
+		new[] { 5, 2 }, // M
+		new[] { 5, 3 }, // N
+		new[] { 6, 7 }, // O
+		new[] { 6, 0 }, // P
+		new[] { 6, 1 }, // Q
+		new[] { 6, 2 }, // R
+		new[] { 6, 3 }, // S
+		new[] { 7, 0 }, // T
+		new[] { 7, 1 }, // U
+		new[] { 0, 3 }, // V
+		new[] { 1, 2 }, // W
+		new[] { 1, 3 }, // X
+		new[] { 7, 2 }, // Y
+		new[] { 2, 3 } // Z
 	};
     private static readonly bool[][] morse = new bool[26][]
     {
-        new bool[] { true, false, true, true, true }, // A
-		new bool[] { true, true, true, false, true, false, true, false, true }, // B
-		new bool[] { true, true, true, false, true, false, true, true, true, false, true }, // C
-		new bool[] { true, true, true, false, true, false, true }, // D
-		new bool[] { true }, // E
-		new bool[] { true, false, true, false, true, true, true, false, true }, // F
-		new bool[] { true, true, true, false, true, true, true, false, true }, // G
-		new bool[] { true, false, true, false, true, false, true }, // H
-		new bool[] { true, false, true }, // I
-		new bool[] { true, false, true, true, true, false, true, true, true, false, true, true, true }, // J
-		new bool[] { true, true, true, false, true, false, true, true, true }, // K
-		new bool[] { true, false, true, true, true, false, true, false, true }, // L
-		new bool[] { true, true, true, false, true, true, true }, // M
-		new bool[] { true, true, true, false, true }, // N
-		new bool[] { true, true, true, false, true, true, true, false, true, true, true }, // O
-		new bool[] { true, false, true, true, true, false, true, true, true, false, true }, // P
-		new bool[] { true, true, true, false, true, true, true, false, true, false, true, true, true }, // Q
-		new bool[] { true, false, true, true, true, false, true }, // R
-		new bool[] { true, false, true, false, true, false }, // S
-		new bool[] { true, true, true }, // T
-		new bool[] { true, false, true, false, true, true, true }, // U
-		new bool[] { true, false, true, false, true, false, true, true, true }, // V
-		new bool[] { true, false, true, true, true, false, true, true, true }, // W
-		new bool[] { true, true, true, false, true, false, true, false, true, true, true }, // X
-		new bool[] { true, true, true, false, true, false, true, true, true, false, true, true, true }, // Y
-		new bool[] { true, true, true, false, true, true, true, false, true, false, true } // Z
+        new[] { true, false, true, true, true }, // A
+		new[] { true, true, true, false, true, false, true, false, true }, // B
+		new[] { true, true, true, false, true, false, true, true, true, false, true }, // C
+		new[] { true, true, true, false, true, false, true }, // D
+		new[] { true }, // E
+		new[] { true, false, true, false, true, true, true, false, true }, // F
+		new[] { true, true, true, false, true, true, true, false, true }, // G
+		new[] { true, false, true, false, true, false, true }, // H
+		new[] { true, false, true }, // I
+		new[] { true, false, true, true, true, false, true, true, true, false, true, true, true }, // J
+		new[] { true, true, true, false, true, false, true, true, true }, // K
+		new[] { true, false, true, true, true, false, true, false, true }, // L
+		new[] { true, true, true, false, true, true, true }, // M
+		new[] { true, true, true, false, true }, // N
+		new[] { true, true, true, false, true, true, true, false, true, true, true }, // O
+		new[] { true, false, true, true, true, false, true, true, true, false, true }, // P
+		new[] { true, true, true, false, true, true, true, false, true, false, true, true, true }, // Q
+		new[] { true, false, true, true, true, false, true }, // R
+		new[] { true, false, true, false, true, false }, // S
+		new[] { true, true, true }, // T
+		new[] { true, false, true, false, true, true, true }, // U
+		new[] { true, false, true, false, true, false, true, true, true }, // V
+		new[] { true, false, true, true, true, false, true, true, true }, // W
+		new[] { true, true, true, false, true, false, true, false, true, true, true }, // X
+		new[] { true, true, true, false, true, false, true, true, true, false, true, true, true }, // Y
+		new[] { true, true, true, false, true, true, true, false, true, false, true } // Z
 	};
 
-    private static readonly string[] directionNames = new string[8] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
-    private static readonly string[] ordinals = new string[4] { "1st", "2nd", "3rd", "4th" };
-    private static readonly string[] colorNames = new string[5] { "red", "green", "cyan", "indigo", "pink" };
+    private static readonly string[] directionNames = new[] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+    private static readonly string[] ordinals = new[] { "1st", "2nd", "3rd", "4th" };
+    private static readonly string[] colorNames = new[] { "red", "green", "cyan", "indigo", "pink" };
 
     private static int moduleIdCounter = 1;
     private int moduleId;
     private bool moduleSolved;
 
-    void Awake()
+    private void Awake()
     {
         moduleId = moduleIdCounter++;
         foreach (KMSelectable button in arrowButtons)
@@ -139,7 +139,7 @@ public class semamorse : MonoBehaviour
         colorblindText.gameObject.SetActive(GetComponent<KMColorblindMode>().ColorblindModeActive);
     }
 
-    void Start()
+    private void Start()
     {
         colorOrderIndex = (bomb.GetBatteryHolderCount() + bomb.GetPortPlates().Count()) % 10;
         colorOrder = colorTable[colorOrderIndex];
@@ -189,7 +189,7 @@ public class semamorse : MonoBehaviour
         rotating = StartCoroutine(Rotate());
     }
 
-    void PressArrowButton(KMSelectable button)
+    private void PressArrowButton(KMSelectable button)
     {
         if (moduleSolved || transitioning || (fading.Contains(true) && !stage2) || (fading.Contains(true) && !selected.Contains(true)))
             return;
@@ -241,7 +241,7 @@ public class semamorse : MonoBehaviour
         }
     }
 
-    void PressDotButton(KMSelectable button)
+    private void PressDotButton(KMSelectable button)
     {
         var ix = Array.IndexOf(dotButtons, button);
         if (fading[ix])
@@ -285,7 +285,7 @@ public class semamorse : MonoBehaviour
         }
     }
 
-    IEnumerator Reset()
+    private IEnumerator Reset()
     {
         foreach (Renderer dot in dots)
             StartCoroutine(Fade(dot, off));
@@ -295,7 +295,7 @@ public class semamorse : MonoBehaviour
         StartFlashing();
     }
 
-    IEnumerator FlashMorse(Renderer dot, bool[] morseLetter)
+    private IEnumerator FlashMorse(Renderer dot, bool[] morseLetter)
     {
         while (flashing)
         {
@@ -312,7 +312,7 @@ public class semamorse : MonoBehaviour
         }
     }
 
-    IEnumerator LetterChange()
+    private IEnumerator LetterChange()
     {
         transitioning = true;
         StopFlashing();
@@ -321,7 +321,7 @@ public class semamorse : MonoBehaviour
         transitioning = false;
     }
 
-    IEnumerator Fade(Renderer dot, Color endColor)
+    private IEnumerator Fade(Renderer dot, Color endColor)
     {
         var elapsed = 0f;
         var duration = 1f;
@@ -341,7 +341,7 @@ public class semamorse : MonoBehaviour
         transitioning = false;
     }
 
-    void StartFlashing()
+    private void StartFlashing()
     {
         if (flashing)
             return;
@@ -350,14 +350,14 @@ public class semamorse : MonoBehaviour
             morseFlashes[i] = StartCoroutine(FlashMorse(dots[semaphore[displayedLetters[0][currentPos]][i]], morse[displayedLetters[1][currentPos]]));
     }
 
-    void StopFlashing()
+    private void StopFlashing()
     {
         flashing = false;
         for (int i = 0; i < 2; i++)
             StopCoroutine(morseFlashes[i]);
     }
 
-    IEnumerator Rotate()
+    private IEnumerator Rotate()
     {
         while (true)
         {
@@ -372,7 +372,7 @@ public class semamorse : MonoBehaviour
         }
     }
 
-    IEnumerator Solve()
+    private IEnumerator Solve()
     {
         StopCoroutine(rotating);
         StartCoroutine(StopSpinning());
@@ -394,7 +394,7 @@ public class semamorse : MonoBehaviour
         audio.PlaySoundAtTransform("solve", pivot);
     }
 
-    IEnumerator FadeLed()
+    private IEnumerator FadeLed()
     {
         var elapsed = 0f;
         var duration = 1f;
@@ -413,7 +413,7 @@ public class semamorse : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator StopSpinning()
+    private IEnumerator StopSpinning()
     {
         var elapsed = 0f;
         var duration = 2f;
@@ -445,7 +445,7 @@ public class semamorse : MonoBehaviour
     private readonly string TwitchHelpMessage = @"!{0} <left/right> [Presses the left or right arrow] | !{0} start [If not in submission mode, enters submission mode] | !{0} <NW SE> [If in submission mode, presses the dots northwest and southeast]";
 #pragma warning restore 414
 
-    IEnumerator ProcessTwitchCommand(string input)
+    private IEnumerator ProcessTwitchCommand(string input)
     {
         var cmd = input.ToLowerInvariant().Split(' ').ToArray();
         yield return "solve";
@@ -499,13 +499,13 @@ public class semamorse : MonoBehaviour
             yield break;
     }
 
-    IEnumerator TwitchHandleForcedSolve()
+    private IEnumerator TwitchHandleForcedSolve()
     {
         if (stage2)
             goto readyToSubmit;
         dotButtons[0].OnInteract();
         yield return new WaitForSeconds(1.25f);
-        readyToSubmit:
+    readyToSubmit:
         if (selected.Contains(true))
         {
             for (int i = 0; i < 8; i++)
